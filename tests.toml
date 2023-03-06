@@ -1,0 +1,25 @@
+test_format = 1.0
+
+[default]
+
+    # ------------
+    # Tests to run
+    # ------------
+
+    
+
+    # -------------------------------
+    # Default args to use for install
+    # -------------------------------
+    
+    
+
+    # -------------------------------
+    # Commits to test upgrade from
+    # -------------------------------
+
+
+
+[some_additional_testsuite]
+
+    args.collector = false

@@ -1,7 +1,5 @@
-This is a dummy disclaimer to display after the install
+For any collector not on that host, you should change the `--api-endpoint`.
 
-The app url is `__DOMAIN____PATH__`
+For example :
 
-The app install dir is `__INSTALL_DIR__`
-
-The app id is `__ID__`
+> `/opt/scrutiny/bin/scrutiny-collector-metrics-linux-amd64 run --api-endpoint https://__DOMAIN____PATH__`

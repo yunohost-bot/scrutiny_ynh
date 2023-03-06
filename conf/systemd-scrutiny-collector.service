@@ -1,0 +1,39 @@
+[Unit]
+Description=Scrutiny Collector
+After=network-online.target scrutiny-web-server.service
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=__INSTALL_DIR__
+LogsDirectory=__APP__
+StateDirectory=__APP__
+ExecStart=__INSTALL_DIR__/bin/scrutiny-collector-metrics-linux-amd64 run --config __INSTALL_DIR__/config/collector.yaml
+Restart=no
+StandardOutput=append:/var/log/__APP__/__APP__-collector.log
+StandardError=inherit
+
+NoNewPrivileges=true
+SystemCallArchitectures=native
+PrivateTmp=yes
+ProtectHome=yes
+#ProtectSystem=strict
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RemoveIPC=yes
+
+# smartctl apparently doesn't function properly with this protection in place
+#ProtectClock=yes
+
+[Install]
+WantedBy=multi-user.target

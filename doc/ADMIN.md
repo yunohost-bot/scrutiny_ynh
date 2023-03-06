@@ -1,3 +1,5 @@
-This is a dummy admin doc for this app
+For any collector not on that host, you should change the `--api-endpoint`.
 
-The app install dir is `__INSTALL_DIR__`
+For example :
+
+> `/opt/scrutiny/bin/scrutiny-collector-metrics-linux-amd64 run --api-endpoint https://__DOMAIN____PATH__`
