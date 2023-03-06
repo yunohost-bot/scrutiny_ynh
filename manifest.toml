@@ -9,8 +9,7 @@ version = "0.6.0~ynh1"
 maintainers = ["ewilly"]
 
 [upstream]
-license = "free"
-website = "https://github.com/AnalogJ/scrutiny"
+license = "MIT"
 admindoc = "https://github.com/AnalogJ/scrutiny/tree/master/docs"
 code = "https://github.com/AnalogJ/scrutiny"
 fund = "https://paypal.me/analogj/usd10"
@@ -53,7 +52,7 @@ ram.runtime = "50M"
     main.show_tile = true
     main.protected= true
     main.allowed = "admins"
-    #api.url = "__DOMAIN____PATH__/api" # FIXME : __PATH__ in not handled by yunohost for the api in manifest.toml
+    #api.url = "__DOMAIN____PATH__/api/" # __PATH__ in not handled by yunohost for the api in manifest.toml
     api.url = "re:__DOMAIN__/.*api/.*"
     api.auth_header = false
     api.show_tile = false
