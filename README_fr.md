@@ -58,7 +58,6 @@ Scrutiny is a simple but focused application, with a couple of core features:
 
 ## Documentations et ressources
 
-* Site officiel de l’app : <https://github.com/AnalogJ/scrutiny>
 * Documentation officielle de l’admin : <https://github.com/AnalogJ/scrutiny/tree/master/docs>
 * Dépôt de code officiel de l’app : <https://github.com/AnalogJ/scrutiny>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_scrutiny>
