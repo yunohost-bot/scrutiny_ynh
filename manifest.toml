@@ -17,7 +17,7 @@ fund = "https://paypal.me/analogj/usd10"
 [integration]
 yunohost = ">= 11.1.6"
 architectures = ["amd64", "arm64"]
-multi_instance = true
+multi_instance = false
 ldap = "not_relevant" 
 sso = "not_relevant"
 disk = "50M"
@@ -34,7 +34,7 @@ ram.runtime = "50M"
     
     [install.collector]
     ask.en = "Should the collector be activated on this host?"
-    ask.fr = "Le collector doit-il est activé sur cet host ?"
+    help.en = "Let it to true if yunohost is running on bare metal (i.e. not in a VM or in a LXC)"
     type = "boolean"
     default = true
 

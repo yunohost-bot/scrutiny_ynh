@@ -4,6 +4,7 @@ After=network-online.target scrutiny-web-server.service
 
 [Service]
 Type=oneshot
+# Only root can fully execute smartcl features
 User=root
 Group=root
 WorkingDirectory=__INSTALL_DIR__
@@ -11,7 +12,7 @@ LogsDirectory=__APP__
 StateDirectory=__APP__
 ExecStart=__INSTALL_DIR__/bin/scrutiny-collector-metrics-linux-amd64 run --config __INSTALL_DIR__/config/collector.yaml
 Restart=no
-StandardOutput=append:/var/log/__APP__/__APP__-collector.log
+StandardOutput=append:/var/log/__APP__/collector.log
 StandardError=inherit
 
 # Sandboxing options to harden security

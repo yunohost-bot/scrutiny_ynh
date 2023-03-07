@@ -1,5 +1,5 @@
 [Unit]
-Description=Scrutiny web server
+Description=Scrutiny Web Server
 After=network-online.target
 
 [Service]
@@ -12,7 +12,7 @@ StateDirectory=__APP__
 ExecStart=__INSTALL_DIR__/bin/scrutiny-web-linux-amd64 start --config __INSTALL_DIR__/config/scrutiny.yaml
 Restart=always
 RestartSec=10s
-StandardOutput=append:/var/log/__APP__/__APP__-web-server.log
+StandardOutput=append:/var/log/__APP__/web-server.log
 StandardError=inherit
 
 # Sandboxing options to harden security

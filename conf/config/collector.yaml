@@ -23,7 +23,6 @@ version: 1
 host:
   id: "yunohost"
 
-
 # This block allows you to override/customize the settings for devices detected by
 # Scrutiny via `smartctl --scan`
 # See the "--device=TYPE" section of https://linux.die.net/man/8/smartctl
@@ -62,16 +61,13 @@ devices:
 #      metrics_info_args: '--info --json -T permissive' # used to determine device unique ID & register device with Scrutiny
 #      metrics_smart_args: '--xall --json -T permissive' # used to retrieve smart data for each device.
 
-
 log:
-  file: /var/log/__APP__/__APP__-collector.log
+  file: /var/log/__APP__/collector.log
   level: INFO
-#
+
 api:
 #  endpoint: 'https://__DOMAIN____PATH__/'
-  endpoint: 'http://localhost:8080__PATH__/'
-#  endpoint: 'http://localhost:8080'
-#  endpoint: 'http://localhost:8080/custombasepath'
+  endpoint: 'http://127.0.0.1:__PORT____PATH__/'
 # if you need to use a custom base path (for a reverse proxy), you can add a suffix to the endpoint.
 #  See docs/TROUBLESHOOTING_REVERSE_PROXY.md for more info,
 
@@ -97,4 +93,3 @@ api:
 #  short:
 #    enable: false
 #    command: ''
- 

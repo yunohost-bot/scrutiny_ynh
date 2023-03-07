@@ -17,10 +17,12 @@ source /usr/share/yunohost/helpers
 ynh_script_progression --message="Setting up source files..." --weight=1
 
 mkdir -p "$install_dir/bin"
-if [ $YNH_ARCH == "amd64" ]; then
+if [ $YNH_ARCH == "amd64" ]
+then
 	ynh_setup_source --source_id="src/scrutiny-web-linux-amd64" --dest_dir="$install_dir/bin"
 	ynh_setup_source --source_id="src/scrutiny-collector-metrics-linux-amd64" --dest_dir="$install_dir/bin"
-elif [ $YNH_ARCH == "arm64" ]; then
+elif [ $YNH_ARCH == "arm64" ]
+then
 	ynh_setup_source --source_id="src/scrutiny-web-linux-arm64" --dest_dir="$install_dir/bin"
 	ynh_setup_source --source_id="src/scrutiny-collector-metrics-linux-arm64" --dest_dir="$install_dir/bin"
 fi
@@ -37,11 +39,12 @@ ynh_add_nginx_config
 
 # Create a dedicated systemd config
 ynh_add_systemd_config --service="scrutiny-web-server" --template="systemd-scrutiny-web-server.service"
-yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/$app-web-server.log"
+yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log"
 
 ynh_add_config --template="systemd-scrutiny-collector.service" --destination="/etc/systemd/system/scrutiny-collector.service"
-if [ $collector ]; then
-	yunohost service add "scrutiny-collector.timer" --description="Collector timer for smartd S.M.A.R.T monitoring" --log="/var/log/$app/$app-web-server.log"
+if [ $collector -eq 1 ]
+then
+	yunohost service add "scrutiny-collector" --description="Collector running on timer (daily) for smartd S.M.A.R.T monitoring" --log="/var/log/$app/collector.log"
 fi
 
 # Use logrotate to manage application logfile(s)
@@ -55,6 +58,12 @@ ynh_use_logrotate --specific_user="$app"
 ynh_script_progression --message="Adding a configuration file..." --weight=1
 
 mkdir -p "$install_dir/config"
+if [ "${path}" == "/" ]
+then
+	base_path=""
+else
+	base_path="${path}"
+fi
 ynh_add_config --template="config/scrutiny.yaml" --destination="$install_dir/config/scrutiny.yaml"
 
 ynh_add_config --template="systemd-scrutiny-collector.timer" --destination="/etc/systemd/system/scrutiny-collector.timer"
@@ -74,13 +83,14 @@ myynh_set_permissions
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 ynh_systemd_action --service_name="influxdb" --action="enable"
 ynh_systemd_action --service_name="influxdb" --action="start"
-ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/scrutiny-web-server.log"
-if [ $collector ]; then
+ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/web-server.log"
+if [ $collector -eq 1 ]
+then
 	systemctl daemon-reload
 	ynh_systemd_action --service_name="scrutiny-collector.service" --action="enable"
-	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/scrutiny-collector.log"
+	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/collector.log"
 	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="enable"
-	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start"
+	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start" --log_path="/var/log/$app/collector.log"
 fi
 
 #=================================================

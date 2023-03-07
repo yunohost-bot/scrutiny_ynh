@@ -30,9 +30,10 @@ systemctl enable "/etc/systemd/system/scrutiny-web-server.service" --quiet
 ynh_restore_file --origin_path="/etc/systemd/system/scrutiny-collector.service"
 ynh_restore_file --origin_path="/etc/systemd/system/scrutiny-collector.timer"
 
-yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/$app-web-server.log"
-if [ $collector ]; then
-	yunohost service add "scrutiny-collector.timer" --description="Collector timer for smartd S.M.A.R.T monitoring" --log="/var/log/$app/$app-web-server.log"
+yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log"
+if [ $collector -eq 1 ]
+then
+	yunohost service add "scrutiny-collector" --description="Collector running on timer (daily) for smartd S.M.A.R.T monitoring" --log="/var/log/$app/collector.log"
 fi
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"
@@ -47,13 +48,14 @@ ynh_script_progression --message="Reloading NGINX web server and $app's service.
 
 # Typically you only have either $app or php-fpm but not both at the same time...
 ynh_systemd_action --service_name="influxdb" --action="start"
-ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/scrutiny-web-server.log"
-if [ $collector ]; then
+ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/web-server.log"
+if [ $collector -eq 1 ]
+then
 	systemctl daemon-reload
 	ynh_systemd_action --service_name="scrutiny-collector.service" --action="enable"
-	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/scrutiny-collector.log"
+	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/collector.log"
 	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="enable"
-	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start"
+	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start" --log_path="/var/log/$app/collector.log"
 fi
 
 ynh_systemd_action --service_name=nginx --action=reload

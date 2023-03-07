@@ -28,7 +28,7 @@ web:
     # see docs/TROUBLESHOOTING_REVERSE_PROXY.md
     # basepath: `/scrutiny`
     # leave empty unless behind a path prefixed proxy
-    basepath: '__PATH__'
+    basepath: '__BASE_PATH__'
   database:
     # can also set absolute path here
     location: __INSTALL_DIR__/config/scrutiny.db
@@ -56,7 +56,7 @@ web:
     #   insecure_skip_verify: false
 
 log:
-  file: /var/log/__APP__/__APP__-web-server.log
+  file: /var/log/__APP__/web-server.log
   level: INFO
 
 # Notification "urls" look like the following. For more information about service specific configuration see

@@ -1,4 +1,8 @@
-For any collector not on that host, you should change the `--api-endpoint`.
+For any collector not on that host...
+
+...refer to the documentation at [https://github.com/AnalogJ/scrutiny/blob/master/docs/INSTALL_MANUAL.md#collector](https://github.com/AnalogJ/scrutiny/blob/master/docs/INSTALL_MANUAL.md#collector)
+
+...change the `--api-endpoint`
 
 For example :
 

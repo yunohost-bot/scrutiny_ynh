@@ -25,20 +25,17 @@ fi
 
 if ynh_exec_warn_less yunohost service status "scrutiny-collector" >/dev/null
 then
-	ynh_script_progression --message="Removing scrutiny-collector timer integration..." --weight=1
+	ynh_script_progression --message="Removing scrutiny-collector service integration..." --weight=1
 	yunohost service remove "scrutiny-collector"
 fi
 
 ynh_remove_systemd_config --service="scrutiny-web-server"
 ynh_remove_systemd_config --service="scrutiny-collector"
+ynh_secure_remove --file="/etc/systemd/system/scrutiny-collector.timer"
 
 ynh_remove_nginx_config
 
 ynh_remove_logrotate
-
-if [ $collector ]; then
-	ynh_secure_remove --file="/etc/systemd/system/scrutiny-collector.timer"
-fi
 
 ynh_secure_remove --file="/var/log/$app"
 
