@@ -33,7 +33,7 @@ ynh_restore_file --origin_path="/etc/systemd/system/scrutiny-collector.timer"
 yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log"
 if [ $collector -eq 1 ]
 then
-	yunohost service add "scrutiny-collector" --description="Collector running on timer (daily) for smartd S.M.A.R.T monitoring" --log="/var/log/$app/collector.log"
+	yunohost service add "scrutiny-collector" --description="Collector running on timer (daily) for smartd S.M.A.R.T monitoring" --log="/var/log/$app/collector.log" --test_status="systemctl show scrutiny-collector.service -p ActiveState --value | grep -v failed"
 fi
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"

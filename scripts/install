@@ -44,7 +44,7 @@ yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A
 ynh_add_config --template="systemd-scrutiny-collector.service" --destination="/etc/systemd/system/scrutiny-collector.service"
 if [ $collector -eq 1 ]
 then
-	yunohost service add "scrutiny-collector" --description="Collector running on timer (daily) for smartd S.M.A.R.T monitoring" --log="/var/log/$app/collector.log"
+	yunohost service add "scrutiny-collector" --description="Collector running on timer (daily) for smartd S.M.A.R.T monitoring" --log="/var/log/$app/collector.log" --test_status="systemctl show scrutiny-collector.service -p ActiveState --value | grep -v failed"
 fi
 
 # Use logrotate to manage application logfile(s)
