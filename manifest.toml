@@ -9,8 +9,7 @@ version = "0.6.0~ynh1"
 maintainers = ["ewilly"]
 
 [upstream]
-license = "free"
-website = "https://github.com/AnalogJ/scrutiny"
+license = "MIT"
 admindoc = "https://github.com/AnalogJ/scrutiny/tree/master/docs"
 code = "https://github.com/AnalogJ/scrutiny"
 fund = "https://paypal.me/analogj/usd10"
@@ -18,7 +17,7 @@ fund = "https://paypal.me/analogj/usd10"
 [integration]
 yunohost = ">= 11.1.6"
 architectures = ["amd64", "arm64"]
-multi_instance = true
+multi_instance = false
 ldap = "not_relevant" 
 sso = "not_relevant"
 disk = "50M"
@@ -35,7 +34,7 @@ ram.runtime = "50M"
     
     [install.collector]
     ask.en = "Should the collector be activated on this host?"
-    ask.fr = "Le collector doit-il est activé sur cet host ?"
+    help.en = "Let it to true if yunohost is running on bare metal (i.e. not in a VM or in a LXC)"
     type = "boolean"
     default = true
 
@@ -53,8 +52,7 @@ ram.runtime = "50M"
     main.show_tile = true
     main.protected= true
     main.allowed = "admins"
-    #api.url = "__DOMAIN____PATH__/api" # FIXME : __PATH__ in not handled by yunohost for the api in manifest.toml
-    api.url = "re:__DOMAIN__/.*api/.*"
+    api.url = "/api"
     api.auth_header = false
     api.show_tile = false
     api.protected= true

@@ -24,11 +24,11 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 ynh_systemd_action --service_name="influxdb" --action="stop"
-ynh_systemd_action --service_name="scrutiny-web-server.service" --action="stop" --log_path="/var/log/$app/scrutiny-web-server.log"
-if [ $collector ]; then
-    ynh_systemd_action --service_name="scrutiny-collector.timer" --action="stop"
+ynh_systemd_action --service_name="scrutiny-web-server.service" --action="stop" --log_path="/var/log/$app/web-server.log"
+if [ $collector -eq 1 ]
+then
+    ynh_systemd_action --service_name="scrutiny-collector.timer" --action="stop" --log_path="/var/log/$app/collector.log"
 fi
 
 #=================================================
@@ -42,10 +42,12 @@ then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	if [ $YNH_ARCH == "amd64" ]; then
+	if [ $YNH_ARCH == "amd64" ]
+	then
 		ynh_setup_source --source_id="src/scrutiny-web-linux-amd64" --dest_dir="$install_dir/bin"
 		ynh_setup_source --source_id="src/scrutiny-collector-metrics-linux-amd64" --dest_dir="$install_dir/bin"
-	elif [ $YNH_ARCH == "arm64" ]; then
+	elif [ $YNH_ARCH == "arm64" ]
+	then
 		ynh_setup_source --source_id="src/scrutiny-web-linux-arm64" --dest_dir="$install_dir/bin"
 		ynh_setup_source --source_id="src/scrutiny-collector-metrics-linux-arm64" --dest_dir="$install_dir/bin"
 	fi
@@ -60,11 +62,12 @@ ynh_script_progression --message="Upgrading system configurations related to $ap
 ynh_add_nginx_config
 
 ynh_add_systemd_config --service="scrutiny-web-server" --template="systemd-scrutiny-web-server.service"
-yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/$app-web-server.log"
+yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log"
 
 ynh_add_config --template="systemd-scrutiny-collector.service" --destination="/etc/systemd/system/scrutiny-collector.service"
-if [ $collector ]; then
-	yunohost service add "scrutiny-collector.timer" --description="Collector timer for smartd S.M.A.R.T monitoring" --log="/var/log/$app/$app-web-server.log"
+if [ $collector -eq 1 ]
+then
+	yunohost service add "scrutiny-collector" --description="Collector running on timer (daily) for smartd S.M.A.R.T monitoring" --log="/var/log/$app/collector.log" --test_status="systemctl show scrutiny-collector.service -p ActiveState --value | grep -v failed"
 fi
 
 ynh_use_logrotate --specific_user="$app" --non-append
@@ -76,6 +79,12 @@ ynh_use_logrotate --specific_user="$app" --non-append
 #=================================================
 ynh_script_progression --message="Updating a configuration file..." --weight=1
 
+if [ "${path}" == "/" ]
+then
+	base_path=""
+else
+	base_path="${path}"
+fi
 ynh_add_config --template="config/scrutiny.yaml" --destination="$install_dir/config/scrutiny.yaml"
 
 ynh_add_config --template="systemd-scrutiny-collector.timer" --destination="/etc/systemd/system/scrutiny-collector.timer"
@@ -93,13 +102,14 @@ myynh_set_permissions
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 ynh_systemd_action --service_name="influxdb" --action="enable"
 ynh_systemd_action --service_name="influxdb" --action="start"
-ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/scrutiny-web-server.log"
-if [ $collector ]; then
+ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/web-server.log"
+if [ $collector -eq 1 ]
+then
 	systemctl daemon-reload
 	ynh_systemd_action --service_name="scrutiny-collector.service" --action="enable"
-	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/scrutiny-collector.log"
+	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/collector.log"
 	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="enable"
-	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start"
+	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start" --log_path="/var/log/$app/collector.log"
 fi
 
 #=================================================

@@ -16,7 +16,12 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="influxdb" --action="stop"
+ynh_systemd_action --service_name="scrutiny-web-server.service" --action="stop" --log_path="/var/log/$app/web-server.log"
+if [ $collector -eq 1 ]
+then
+    ynh_systemd_action --service_name="scrutiny-collector.timer" --action="stop" --log_path="/var/log/$app/collector.log"
+fi
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -28,8 +33,30 @@ ynh_change_url_nginx_config
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
-# ...
+# in the change_url context, variables called new_domain, new_path, old_domain, old_path will be available, as well as change_domain and change_path equal to 0 (false) or 1 (true) depending if the domain / path changed
 #=================================================
+
+if [ "$old_path" != "$new_path" ]
+then
+	# Update scrutiny.yaml
+	if [ "${new_path}" == "/" ]
+	then
+		new_base_path=""
+	else
+		new_base_path="\\${new_path}"
+	fi
+	key="basepath"
+	new_value="'$new_base_path'"
+	sed --regexp-extended  "s/^(\s*${key}:\s*).*/\1${new_value}/" --in-place "$install_dir/config/scrutiny.yaml"
+	ynh_store_file_checksum --file="$install_dir/config/scrutiny.yaml"
+	
+	# Update collector.yaml
+	port=$(ynh_app_setting_get  --app=$app --key=port)
+	key="endpoint"
+	new_value="'http:\/\/127.0.0.1:${port}${new_base_path}\/'"
+	sed --regexp-extended  "s/^(\s*${key}:\s*).*/\1${new_value}/" --in-place "$install_dir/config/collector.yaml"
+	ynh_store_file_checksum --file="$install_dir/config/collector.yaml"
+fi
 
 #=================================================
 # GENERIC FINALISATION
@@ -38,7 +65,14 @@ ynh_change_url_nginx_config
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="influxdb" --action="start"
+ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/web-server.log"
+if [ $collector -eq 1 ]
+then
+	systemctl daemon-reload
+	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/collector.log"
+	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start" --log_path="/var/log/$app/collector.log"
+fi
 
 #=================================================
 # END OF SCRIPT
