@@ -1,7 +1,6 @@
 SOURCE_URL=https://github.com/AnalogJ/scrutiny/releases/download/v0.6.0/scrutiny-web-linux-arm64
 SOURCE_SUM=2813c2b9e37625a31b308842d2debd81152693ecc41754d644df8877b4747268
 SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=
-SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=scrutiny-web-linux-arm64
+SOURCE_FORMAT=binary
+SOURCE_IN_SUBDIR=
 SOURCE_EXTRACT=false
