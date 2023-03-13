@@ -17,8 +17,8 @@
 #=================================================
 
 # Fetching information
-current_version=$(cat manifest.toml | awk -v key="version" '$1 == key { gsub("\"","",$3);print $3 }' | awk -F'~' '{print $1}')
-repo=$(cat manifest.toml | awk -v key="code" '$1 == key { gsub("\"","",$3);print $3 }' | awk -F'https://github.com/' '{print $2}')
+current_version=$(cat manifest.toml | tomlq -j '.version|split("~")[0]')
+repo=$(cat manifest.toml | tomlq -j '.upstream.code|split("https://github.com/")[1]')
 
 # Some jq magic is needed, because the latest upstream release is not always the latest version (e.g. security patches for older versions)
 version=$(curl --silent "https://api.github.com/repos/$repo/releases" | jq -r '.[] | select( .prerelease != true ) | .tag_name' | sort -V | tail -1)
@@ -27,8 +27,9 @@ assets=($(curl --silent "https://api.github.com/repos/$repo/releases" | jq -r '[
 # Later down the script, we assume the version has only digits and dots
 # Sometimes the release name starts with a "v", so let's filter it out.
 # You may need more tweaks here if the upstream repository has different naming conventions. 
-if [[ ${version:0:1} == "v" || ${version:0:1} == "V" ]]; then
-    version=${version:1}
+if [[ ${version:0:1} == "v" || ${version:0:1} == "V" ]]
+then
+	version=${version:1}
 fi
 
 # Setting up the environment variables
@@ -40,13 +41,15 @@ echo "REPO=$repo" >> $GITHUB_ENV
 echo "PROCEED=false" >> $GITHUB_ENV
 
 # Proceed only if the retrieved version is greater than the current one
-if ! dpkg --compare-versions "$current_version" "lt" "$version" ; then
-    echo "::warning ::No new version available"
-    exit 0
+if ! dpkg --compare-versions "$current_version" "lt" "$version"
+then
+	echo "::warning ::No new version available"
+	exit 0
 # Proceed only if a PR for this new version does not already exist
-elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.git ci-auto-update-v$version ; then
-    echo "::warning ::A branch already exists for this update"
-    exit 0
+elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.git ci-auto-update-v$version
+then
+	echo "::warning ::A branch already exists for this update"
+	exit 0
 fi
 
 # Each release can hold multiple assets (e.g. binaries for different architectures, source code, etc.)
@@ -60,75 +63,89 @@ echo "${#assets[@]} available asset(s)"
 # Here is an example for Grav, it has to be adapted in accordance with how the upstream releases look like.
 
 # Let's loop over the array of assets URLs
-for asset_url in ${assets[@]}; do
+for asset_url in ${assets[@]}
+do
 
-echo "Handling asset at $asset_url"
+	filename=${asset_url##*/}
+	echo "Handling asset $filename at $asset_url"
+	
 
-# Assign the asset to a source file in conf/ directory
-# Here we base the source file name upon a unique keyword in the assets url (admin vs. update)
-# Leave $src empty to ignore the asset
-case $asset_url in
-  *"scrutiny-collector-metrics-linux-amd64"*)
-    src="scrutiny-collector-metrics-linux-amd64"
-    ;;
-  *"scrutiny-collector-metrics-linux-arm64"*)
-    src="scrutiny-collector-metrics-linux-arm64"
-    ;;
-  *"scrutiny-web-frontend.tar.gz"*)
-    src="scrutiny-web-frontend.tar.gz"
-    ;;
-  *"scrutiny-web-linux-amd64"*)
-    src="scrutiny-web-linux-amd64"
-    ;;
-  *"scrutiny-web-linux-arm64"*)
-    src="scrutiny-web-linux-arm64"
-    ;;
-  *)
-    src=""
-    ;;
-esac
+	# Assign the asset to a source file in conf/ directory
+	# Here we base the source file name upon a unique keyword in the assets url (admin vs. update)
+	# Leave $src empty to ignore the asset
+	case $asset_url in
+		*"scrutiny-web-frontend.tar.gz"*)
+			#arch=""
+			;;
+		*"scrutiny-web-linux-amd64"*)
+			#arch="amd64"
+			;;
+		*"scrutiny-web-linux-arm64"*)
+			#arch="arm64"
+			;;
+		*"scrutiny-collector-metrics-linux-amd64"*)
+			#arch="amd64"
+			;;
+		*"scrutiny-collector-metrics-linux-arm64"*)
+			#arch="arm64"
+			;;
+		*)
+			filename=""
+		;;
+	esac
+		
+	# If $src is not empty, let's process the asset
+	if [ ! -z "$filename" ]
+	then
 
-# If $src is not empty, let's process the asset
-if [ ! -z "$src" ]; then
+		# Create the temporary directory
+		tempdir="$(mktemp -d)"
 
-# Create the temporary directory
-tempdir="$(mktemp -d)"
+		# Download sources and calculate checksum
+		curl --silent -4 -L $asset_url -o "$tempdir/$filename"
+		checksum=$(sha256sum "$tempdir/$filename" | head -c 64)
 
-# Download sources and calculate checksum
-filename=${asset_url##*/}
-curl --silent -4 -L $asset_url -o "$tempdir/$filename"
-checksum=$(sha256sum "$tempdir/$filename" | head -c 64)
+		# Delete temporary directory
+		rm -rf $tempdir
 
-# Delete temporary directory
-rm -rf $tempdir
+		#DOES NOT WORK BECAUSE IT REORDER ALL THE MANIFEST IN A STRANGE WAY
+		# Rewrite sources in manifest.toml
+# 		if [ -z "$arch" ]
+# 		then
+# 			echo "$(tomlq --toml-output --slurp --indent 4 ".[] | .resources.sources.$src.url = \"$asset_url\"" manifest.toml)" > manifest.toml
+# 			echo "$(tomlq --toml-output --slurp --indent 4 ".[] | .resources.sources.$src.sha256 = \"$checksum\"" manifest.toml)" > manifest.toml
+# 		else
+# 			echo "$(tomlq --toml-output --slurp --indent 4 ".[] | .resources.sources.$src.$arch.url = \"$asset_url\"" manifest.toml)" > manifest.toml
+# 			echo "$(tomlq --toml-output --slurp --indent 4 ".[] | .resources.sources.$src.$arch.sha256 = \"$checksum\"" manifest.toml)" > manifest.toml
+# 		fi
+		
+		# Get extension
+		if [[ $filename == *.tar.gz ]]
+		then
+			extension="tar.gz"
+			subdir=true
+			extract=true
+		else
+			extension="binary"
+			subdir=""
+			extract=false
+		fi
 
-# Get extension
-if [[ $filename == *.tar.gz ]]; then
-  extension=tar.gz
-  extract=true
-elif [[ $filename == ${filename##*.} ]]; then
-    extension=""
-    extract=false
-else
-    extension=${filename##*.}
-    extract=false
-fi
-
-# Rewrite source file
-cat <<EOT > conf/src/$src.src
+		# Rewrite source file
+		cat <<EOT > conf/src/$filename.src
 SOURCE_URL=$asset_url
 SOURCE_SUM=$checksum
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=$extension
-SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=$filename
+SOURCE_IN_SUBDIR=$subdir
+SOURCE_FILENAME=
 SOURCE_EXTRACT=$extract
 EOT
-echo "... conf/src/$src.src updated"
+		echo "... conf/src/$filename.src updated"
 
-else
-echo "... asset ignored"
-fi
+	else
+		echo "... asset ignored"
+	fi
 
 done
 
@@ -144,7 +161,9 @@ done
 #=================================================
 
 # Replace new version in manifest
-sed -i "s/^version = .*/version = \"$version~ynh1\"/" manifest.toml
+sed --in-place "s/^version = .*/version = \"$version~ynh1\"/" manifest.toml
+#DOES NOT WORK BECAUSE IT REORDER ALL THE MANIFEST IN A STRANGE WAY
+#echo "$(tomlq --toml-output --slurp --indent 4 ".[] | .version = \"$version~ynh1\"" manifest.toml)" > manifest.toml 
 
 # No need to update the README, yunohost-bot takes care of it
 
