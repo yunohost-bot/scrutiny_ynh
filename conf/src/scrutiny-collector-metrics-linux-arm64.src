@@ -1,7 +1,7 @@
 SOURCE_URL=https://github.com/AnalogJ/scrutiny/releases/download/v0.6.0/scrutiny-collector-metrics-linux-arm64
 SOURCE_SUM=1f204e54065a3279034d4ab23931d0e387a0bd0ac927940b3b96328b6ec063e0
 SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=
-SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=scrutiny-collector-metrics-linux-arm64
+SOURCE_FORMAT=binary
+SOURCE_IN_SUBDIR=
+SOURCE_FILENAME=
 SOURCE_EXTRACT=false
