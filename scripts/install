@@ -39,7 +39,7 @@ ynh_add_nginx_config
 
 # Create a dedicated systemd config
 ynh_add_systemd_config --service="scrutiny-web-server" --template="systemd-scrutiny-web-server.service"
-yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log"
+yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log" --test_status="systemctl show scrutiny-web-server.service -p ActiveState --value | grep -v failed"
 
 ynh_add_config --template="systemd-scrutiny-collector.service" --destination="/etc/systemd/system/scrutiny-collector.service"
 if [ $collector -eq 1 ]

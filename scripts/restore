@@ -46,7 +46,7 @@ ynh_systemd_action --service_name="influxdb" --action="enable"
 ynh_systemd_action --service_name="influxdb" --action="start"
 
 systemctl enable "/etc/systemd/system/scrutiny-web-server.service" --quiet
-yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log"
+yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log" --test_status="systemctl show scrutiny-web-server.service -p ActiveState --value | grep -v failed"
 ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/web-server.log"
 
 if [ $collector -eq 1 ]
