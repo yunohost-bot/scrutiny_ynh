@@ -62,7 +62,7 @@ ynh_script_progression --message="Upgrading system configurations related to $ap
 ynh_add_nginx_config
 
 ynh_add_systemd_config --service="scrutiny-web-server" --template="systemd-scrutiny-web-server.service"
-yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log"
+yunohost service add "scrutiny-web-server" --description="WebUI for smartd S.M.A.R.T monitoring" --log="/var/log/$app/web-server.log" --test_status="systemctl show scrutiny-web-server.service -p ActiveState --value | grep -v failed"
 
 ynh_add_config --template="systemd-scrutiny-collector.service" --destination="/etc/systemd/system/scrutiny-collector.service"
 if [ $collector -eq 1 ]
@@ -100,14 +100,16 @@ myynh_set_permissions
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
+
+systemctl daemon-reload
+
 ynh_systemd_action --service_name="influxdb" --action="enable"
 ynh_systemd_action --service_name="influxdb" --action="start"
+
+ynh_systemd_action --service_name="scrutiny-web-server.service" --action="enable"
 ynh_systemd_action --service_name="scrutiny-web-server.service" --action="start" --log_path="/var/log/$app/web-server.log"
 if [ $collector -eq 1 ]
 then
-	systemctl daemon-reload
-	ynh_systemd_action --service_name="scrutiny-collector.service" --action="enable"
-	ynh_systemd_action --service_name="scrutiny-collector.service" --action="start" --log_path="/var/log/$app/collector.log"
 	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="enable"
 	ynh_systemd_action --service_name="scrutiny-collector.timer" --action="start" --log_path="/var/log/$app/collector.log"
 fi
