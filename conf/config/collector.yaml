@@ -66,10 +66,10 @@ log:
   level: INFO
 
 api:
-#  endpoint: 'https://__DOMAIN____PATH__/'
   endpoint: 'http://127.0.0.1:__PORT____PATH__/'
 # if you need to use a custom base path (for a reverse proxy), you can add a suffix to the endpoint.
 #  See docs/TROUBLESHOOTING_REVERSE_PROXY.md for more info,
+#  endpoint: 'https://__DOMAIN____PATH__/'
 
 # example to show how to override the smartctl command args globally
 #commands:
