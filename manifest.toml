@@ -15,10 +15,10 @@ code = "https://github.com/AnalogJ/scrutiny"
 fund = "https://paypal.me/analogj/usd10"
 
 [integration]
-yunohost = ">= 11.1.6"
+yunohost = ">= 11.2"
 architectures = ["amd64", "arm64"]
 multi_instance = false
-ldap = "not_relevant" 
+ldap = "not_relevant"
 sso = "not_relevant"
 disk = "50M"
 ram.build = "50M"
