@@ -35,7 +35,7 @@ Scrutiny is a simple but focused application, with a couple of core features:
 - (Future) Hard Drive performance testing & tracking
 
 
-**Shipped version:** 0.7.2~ynh1
+**Shipped version:** 0.7.2~ynh2
 
 ## Screenshots
 
@@ -45,6 +45,7 @@ Scrutiny is a simple but focused application, with a couple of core features:
 
 * Official admin documentation: <https://github.com/AnalogJ/scrutiny/tree/master/docs>
 * Upstream app code repository: <https://github.com/AnalogJ/scrutiny>
+* YunoHost Store: <https://apps.yunohost.org/app/scrutiny>
 * Report a bug: <https://github.com/YunoHost-Apps/scrutiny_ynh/issues>
 
 ## Developer info
