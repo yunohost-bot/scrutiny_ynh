@@ -4,7 +4,7 @@ id = "scrutiny"
 name = "Scrutiny"
 description.en = "WebUI for smartd S.M.A.R.T monitoring"
 
-version = "0.7.2~ynh1"
+version = "0.7.2~ynh2"
 
 maintainers = ["ewilly"]
 
