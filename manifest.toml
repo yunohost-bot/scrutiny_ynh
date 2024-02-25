@@ -39,7 +39,6 @@ ram.runtime = "50M"
     default = true
 
 [resources]
-
     [resources.sources.web-linux]
     in_subdir = false
     amd64.url = "https://github.com/AnalogJ/scrutiny/releases/download/v0.7.3/scrutiny-web-linux-amd64"
