@@ -42,16 +42,9 @@ then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	if [ $YNH_ARCH == "amd64" ]
-	then
-		ynh_setup_source --source_id="src/scrutiny-web-linux-amd64" --dest_dir="$install_dir/bin"
-		ynh_setup_source --source_id="src/scrutiny-collector-metrics-linux-amd64" --dest_dir="$install_dir/bin"
-	elif [ $YNH_ARCH == "arm64" ]
-	then
-		ynh_setup_source --source_id="src/scrutiny-web-linux-arm64" --dest_dir="$install_dir/bin"
-		ynh_setup_source --source_id="src/scrutiny-collector-metrics-linux-arm64" --dest_dir="$install_dir/bin"
-	fi
-	ynh_setup_source --source_id="src/scrutiny-web-frontend.tar.gz" --dest_dir="$install_dir/web"
+	ynh_setup_source --source_id="web-linux" --dest_dir="$install_dir/bin"
+	ynh_setup_source --source_id="collector-metrics" --dest_dir="$install_dir/bin"
+	ynh_setup_source --source_id="web-frontend" --dest_dir="$install_dir/web"
 fi
 
 #=================================================
