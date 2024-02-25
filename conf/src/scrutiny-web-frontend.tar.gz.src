@@ -1,6 +1,0 @@
-SOURCE_URL=https://github.com/AnalogJ/scrutiny/releases/download/v0.7.2/scrutiny-web-frontend.tar.gz
-SOURCE_SUM=8754155e5bdac316acdf775b332faf321bc35d40c27f61469206a68086de2af4
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=tar.gz
-SOURCE_IN_SUBDIR=true
-SOURCE_EXTRACT=true
