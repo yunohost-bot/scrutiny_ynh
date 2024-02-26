@@ -18,7 +18,7 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 
 mkdir -p "$install_dir/bin"
 ynh_setup_source --source_id="scrutiny-web-linux" --dest_dir="$install_dir/bin"
-ynh_setup_source --source_id="scrutiny-collector-metrics" --dest_dir="$install_dir/bin"
+ynh_setup_source --source_id="scrutiny-collector-metrics-linux" --dest_dir="$install_dir/bin"
 
 mkdir -p "$install_dir/web"
 ynh_setup_source --source_id="scrutiny-web-frontend" --dest_dir="$install_dir/web"

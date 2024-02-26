@@ -44,7 +44,7 @@ then
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --source_id="scrutiny-web-linux" --dest_dir="$install_dir/bin"
-	ynh_setup_source --source_id="scrutiny-collector-metrics" --dest_dir="$install_dir/bin"
+	ynh_setup_source --source_id="scrutiny-collector-metrics-linux" --dest_dir="$install_dir/bin"
 	ynh_setup_source --source_id="scrutiny-web-frontend" --dest_dir="$install_dir/web"
 fi
 

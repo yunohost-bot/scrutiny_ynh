@@ -4,7 +4,7 @@ id = "scrutiny"
 name = "Scrutiny"
 description.en = "WebUI for smartd S.M.A.R.T monitoring"
 
-version = "0.7.3~ynh1"
+version = "0.7.3~ynh2"
 
 maintainers = ["ewilly"]
 
@@ -52,7 +52,7 @@ ram.runtime = "50M"
         autoupdate.asset.amd64 = "^scrutiny-web-linux-amd64$"
         autoupdate.asset.arm64 = "^scrutiny-web-linux-arm64$"
 
-        [resources.sources.scrutiny-collector-metrics]
+        [resources.sources.scrutiny-collector-metrics-linux]
         in_subdir = false
         amd64.url = "https://github.com/AnalogJ/scrutiny/releases/download/v0.7.3/scrutiny-collector-metrics-linux-amd64"
         amd64.sha256 = "5dff7bc924a4003ae4e9d7c38832d87a931df74aec80b29dba929c18f2643f1b"
