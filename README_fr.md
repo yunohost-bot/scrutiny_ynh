@@ -35,7 +35,7 @@ Scrutiny is a simple but focused application, with a couple of core features:
 - (Future) Hard Drive performance testing & tracking
 
 
-**Version incluse :** 0.7.3~ynh2
+**Version incluse :** 0.7.3~ynh3
 
 ## Captures d’écran
 
