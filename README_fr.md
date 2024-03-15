@@ -34,8 +34,7 @@ Scrutiny is a simple but focused application, with a couple of core features:
 - Configurable Alerting/Notifications via Webhooks
 - (Future) Hard Drive performance testing & tracking
 
-
-**Version incluse :** 0.7.3~ynh3
+**Version incluse :** 0.8.0~ynh1
 
 ## Captures d’écran
 
@@ -43,10 +42,10 @@ Scrutiny is a simple but focused application, with a couple of core features:
 
 ## Documentations et ressources
 
-* Documentation officielle de l’admin : <https://github.com/AnalogJ/scrutiny/tree/master/docs>
-* Dépôt de code officiel de l’app : <https://github.com/AnalogJ/scrutiny>
-* YunoHost Store: <https://apps.yunohost.org/app/scrutiny>
-* Signaler un bug : <https://github.com/YunoHost-Apps/scrutiny_ynh/issues>
+- Documentation officielle de l’admin : <https://github.com/AnalogJ/scrutiny/tree/master/docs>
+- Dépôt de code officiel de l’app : <https://github.com/AnalogJ/scrutiny>
+- YunoHost Store : <https://apps.yunohost.org/app/scrutiny>
+- Signaler un bug : <https://github.com/YunoHost-Apps/scrutiny_ynh/issues>
 
 ## Informations pour les développeurs
 
@@ -54,7 +53,7 @@ Merci de faire vos pull request sur la [branche testing](https://github.com/Yuno
 
 Pour essayer la branche testing, procédez comme suit.
 
-``` bash
+```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/scrutiny_ynh/tree/testing --debug
 ou
 sudo yunohost app upgrade scrutiny -u https://github.com/YunoHost-Apps/scrutiny_ynh/tree/testing --debug
