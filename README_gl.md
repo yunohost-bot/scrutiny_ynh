@@ -34,7 +34,6 @@ Scrutiny is a simple but focused application, with a couple of core features:
 - Configurable Alerting/Notifications via Webhooks
 - (Future) Hard Drive performance testing & tracking
 
-
 **Versión proporcionada:** 0.8.1~ynh1
 
 ## Capturas de pantalla
